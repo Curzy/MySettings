@@ -107,4 +107,5 @@ export LSCOLORS=DxFxCxGxBxegedabagaced
 alias chrome='open /Applications/Google\ Chrome.app --args --disable-web-security --user-data-dir -–allow-file-access-from-files'
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+export FZF_DEFAULT_OPTS='--height 40%'
 
