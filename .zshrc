@@ -2,7 +2,7 @@
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH=/Users/Curzy/.oh-my-zsh
+export ZSH=$HOME/.oh-my-zsh
 
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
@@ -42,7 +42,7 @@ ZSH_THEME="agnosterzak"
 # Uncomment the following line if you want to change the command execution time
 # stamp shown in the history command output.
 # The optional three formats: "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
-# HIST_STAMPS="mm/dd/yyyy"
+HIST_STAMPS="yyyy-mm-dd"
 
 # Would you like to use another custom folder than $ZSH/custom?
 # ZSH_CUSTOM=/path/to/new-custom-folder
@@ -51,8 +51,10 @@ ZSH_THEME="agnosterzak"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git)
-plugins=(zsh-autosuggestions)
+plugins=(
+  git
+  zsh-autosuggestions
+)
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
@@ -85,27 +87,68 @@ export LANG=en_US.UTF-8
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 PATH=$PATH:/usr/local/sbin
-alias ll='ls -al'
-alias gowolsemap='cd ~/Workspace/Wolsemap/ && source bin/activate && cd wolsemap/'
-alias goallz='cd ~/Workspace/flative/allz && source bin/activate && cd allz/'
-alias goroth='cd ~/Workspace/AYUN-INVESTMENTS/roth && source bin/activate && cd roth/'
-alias goseondal='cd ~/Workspace/flative/seondal && source bin/activate && cd seondal/'
-alias gohbnn='cd ~/Workspace/flative/hbnn && source bin/activate && cd hbnn/'
+export TERM=xterm-256color
+alias ls='exa'
+alias ll='exa -al'
+alias gp='git pull'
+alias gf='git fetch'
 
-export GOPATH="/Users/Curzy/Workspace/go"
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
-export PATH="$GOPATH/bin:$PATH"
 eval "$(pyenv init -)"
-source /usr/local/opt/autoenv/activate.sh
+eval "$(rbenv init -)"
+eval "$(direnv hook zsh)"
+eval "$(fasd --init auto)"
 
-export NVM_DIR="/Users/Curzy/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
+
+export PATH=$(which node):$PATH
 
 export CLICOLOR=1
 export LSCOLORS=DxFxCxGxBxegedabagaced
-alias chrome='open /Applications/Google\ Chrome.app --args --disable-web-security --user-data-dir -–allow-file-access-from-files'
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-export FZF_DEFAULT_OPTS='--height 40%'
+export FZF_DEFAULT_OPTS="--height 40% --reverse --preview 'head -80 {}'"
 
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+# place this after nvm initialization!
+autoload -U add-zsh-hook
+load-nvmrc() {
+  local node_version="$(nvm version)"
+  local nvmrc_path="$(nvm_find_nvmrc)"
+
+  if [ -n "$nvmrc_path" ]; then
+    local nvmrc_node_version=$(nvm version "$(cat "${nvmrc_path}")")
+
+    if [ "$nvmrc_node_version" = "N/A" ]; then
+      nvm install
+    elif [ "$nvmrc_node_version" != "$node_version" ]; then
+      nvm use
+    fi
+  elif [ "$node_version" != "$(nvm version default)" ]; then
+    echo "Reverting to nvm default version"
+    nvm use default
+  fi
+}
+add-zsh-hook chpwd load-nvmrc
+load-nvmrc
+
+
+
+source /Users/curzy/Library/Preferences/org.dystroy.broot/launcher/bash/br
+source <(kubectl completion zsh)
+autoload -Uz compinit && compinit
+[ -f "/Users/curzy/Workspace/kubekube/dunamu/bin/darwin_amd64/kubectl_fzf.plugin.zsh" ] && source "/Users/curzy/Workspace/kubekube/dunamu/bin/darwin_amd64/kubectl_fzf.plugin.zsh"
+function kcd() {
+  local dir
+  local line
+  dir=$(find ~/Workspace/kubekube -not -path '*/\.*' -maxdepth 2 -type d | grep "${1:-.}" 2> /dev/null)
+  line=$(echo "$dir" | grep -c "^.*$")
+  if [[ $line -eq 1 ]]; then
+    cd "$dir"
+  else
+    dir=$(echo "$dir" | fzf) && cd "$dir"
+  fi
+}
