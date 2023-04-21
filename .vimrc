@@ -1,5 +1,6 @@
-call plug#begin()
-Plug 'tyrannicaltoucan/vim-quantum'
+call plug#begin('~/.vim/plugged')
+Plug 'arcticicestudio/nord-vim'
+Plug 'pangloss/vim-javascript'
 Plug 'tpope/vim-sensible'
 Plug 'vim-airline/vim-airline'
 Plug 'scrooloose/nerdtree'
@@ -7,18 +8,19 @@ Plug 'vim-syntastic/syntastic'
 Plug 'scrooloose/nerdcommenter'
 Plug 'mattn/emmet-vim'
 Plug 'nathanaelkane/vim-indent-guides'
-Plug 'wakatime/vim-wakatime'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
 Plug 'mxw/vim-jsx'
+Plug 'ajh17/vimcompletesme'
+Plug 'ludovicchabant/vim-gutentags'
+Plug 'johngrib/vim-f-hangul'
 call plug#end()
 
-if has("termguicolors")
-    set termguicolors
-endif
+colorscheme nord
 
-set background=dark
-colorscheme quantum
-let g:airline_theme='quantum'
+let g:airline_theme='nord'
+let g:nord_italic = 1
+let g:nord_underlin = 1
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#fnamemod = ':t'
 set rtp+=/usr/local/opt/fzf
@@ -48,8 +50,10 @@ autocmd FileType python setlocal tabstop=4 softtabstop=4 shiftwidth=4 colorcolum
 map <C-Bslash> :NERDTreeToggle<CR>
 
 set tags=./tags,tags;
-let NERDTreeShowHidden = 1
+let NERDTreeShowHidden = 0
 let g:jsx_ext_required = 0
+let g:javascript_plugin_jsdoc = 1
+let g:javascript_plugin_flow = 1
 
 " =================== fzf.vim settings ===================
 " Default fzf layout
